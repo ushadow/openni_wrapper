@@ -1,3 +1,5 @@
-Bin
+bin
 .externalToolBuilders
 Release
+Debug
+data
