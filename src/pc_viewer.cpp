@@ -25,6 +25,7 @@
 #include <pc_viewer.h>
 
 #include <string.h>
+#include <iostream>
 
 #include <XnCppWrapper.h>
 
@@ -34,38 +35,30 @@
 
 #include <boost/bind.hpp>
 
-#define CHECK_RC(rc, what)                      \
-  if (rc != XN_STATUS_OK) {                               \
-    printf("%s failed: %s\n", what, xnGetStatusString(rc));   \
-  }
+PCViewer::PCViewer(const XnChar* config_file)
+    : viewer_("Point Cloud Viewer"),
+      cloud_(new pcl::PointCloud <pcl::PointXYZ>) {
 
-#define CHECK_ERRORS(rc, errors, what)    \
-  if (rc == XN_STATUS_NO_NODE_PRESENT) {                   \
-    XnChar strError[1024];        \
-    errors.ToString(strError, 1024);  \
-    printf("%s\n", strError);     \
-  }
+  cloud_->height = depth_md_.YRes();
+  cloud_->width = depth_md_.XRes();
+  cloud_->is_dense = true;
 
-PCViewer::PCViewer(const XnChar* config_file) : viewer_("Point Cloud Viewer") {
-  XnStatus rc;
+  cloud_->points.resize(cloud_->height * cloud_->width);
 
-  xn::EnumerationErrors errors;
-  rc = ni_context_.InitFromXmlFile(config_file, &errors);
-  CHECK_ERRORS(rc, errors, "InitFromXmlFile");
-  CHECK_RC(rc, "InitFromXmlFile");
-
-  rc = ni_context_.FindExistingNode(XN_NODE_TYPE_DEPTH, depth_generator_);
-  CHECK_RC(rc, "Find depth generator");
+  z_scale_ = 1.0f / depth_md_.XRes();
+  center_x_ = (cloud_->width >> 1 );
+  center_y_ = (cloud_->height >> 1);
+  bad_point_ = std::numeric_limits<float>::quiet_NaN ();
 }
 
 void PCViewer::run() {
   pcl::visualization::CloudViewer::VizCallable f = boost::bind(
-      &PCViewer::displayCloud, this, _1);
+      &PCViewer::display_cb_, this, _1);
   viewer_.runOnVisualizationThread(f);
   while (!viewer_.wasStopped());
 }
 
-void PCViewer::displayCloud(pcl::visualization::PCLVisualizer& viewer) {
+void PCViewer::display_cb_(pcl::visualization::PCLVisualizer& viewer) {
   XnStatus rc = XN_STATUS_OK;
 
   // Read a new frame
@@ -74,54 +67,42 @@ void PCViewer::displayCloud(pcl::visualization::PCLVisualizer& viewer) {
 
   depth_generator_.GetMetaData(depth_md_);
 
-  viewer.removePointCloud();
-  viewer.addPointCloud(convertToXYZPointCloud(depth_md_));
+  int viewport0, viewport1;
+  viewer.createViewPort(0.0, 0.0, 0.5, 1.0, viewport0);
+  viewer.createViewPort(0.5, 0.0, 1.0, 1.0, viewport1);
+  viewer.removePointCloud("cloud", viewport0);
+  viewer.addPointCloud(convertToXYZPointCloud(depth_md_), "cloud", viewport0);
+  if (depth_md_.FrameID() == 1)
+    viewer.addPointCloud(convertToXYZPointCloud(depth_md_), "cloud", viewport1);
   viewer.setPointCloudRenderingProperties(
       pcl::visualization::PCL_VISUALIZER_COLOR, 1.0, 0.0, 0.0);
 }
 
 pcl::PointCloud<pcl::PointXYZ>::Ptr PCViewer::convertToXYZPointCloud (
     const xn::DepthMetaData& depth) {
-   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud
-       (new pcl::PointCloud <pcl::PointXYZ>);
-
-   cloud->height = depth.YRes();
-   cloud->width = depth.XRes();
-   cloud->header.frame_id = depth.FrameID();
-   cloud->is_dense = true;
-
-   cloud->points.resize(cloud->height * cloud->width);
-
-   register float constant = 1.0f / depth.XRes();
-
-   register float centerX = (cloud->width >> 1 );
-   float centerY = (cloud->height >> 1);
-
-   float bad_point = std::numeric_limits<float>::quiet_NaN ();
-
    // we have to use Data, since operator[] uses assert -> Debug-mode very slow!
    register const XnDepthPixel* depth_map = depth.Data();
 
    register int depth_idx = 0;
-   for (float v = -centerY; v < centerY; v += 1.0) {
-     for (register float u = -centerX; u < centerX; u += 1.0, ++depth_idx) {
+   for (float v = -center_y_; v < center_y_; v += 1.0) {
+     for (register float u = -center_x_; u < center_x_; u += 1.0, ++depth_idx) {
        register double z = depth_map[depth_idx] * 0.001;
-       pcl::PointXYZ& pt = cloud->points[depth_idx];
+       pcl::PointXYZ& pt = cloud_->points[depth_idx];
        // Check for invalid measurements
        if (depth_map[depth_idx] == 0) {
          // not valid
-         pt.x = pt.y = pt.z = bad_point;
+         pt.x = pt.y = pt.z = bad_point_;
          continue;
        }
 
-       register double z_d = z * constant;
+       register double z_d = z * z_scale_;
        // Fill in XYZ
        pt.x = u * z_d;
        pt.y = v * z_d;
-       pt.z = z;
+       pt.z = -z;
      }
    }
-   return cloud;
+   return cloud_;
  }
 
 

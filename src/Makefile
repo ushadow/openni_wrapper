@@ -11,7 +11,6 @@ EXE_NAME = simple_viewer
 
 USED_LIBS += OpenNI pcl_common pcl_visualization
 
-CFG = Debug
 CFLAGS = -Wno-deprecated
 
 include ../CommonMakefile

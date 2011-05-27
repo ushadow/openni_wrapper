@@ -1,5 +1,5 @@
 /*
- * 3d_viewer.h
+ * pc_viewer.h
  *
  *  Created on: May 26, 2011
  *      Author: yingyin
@@ -15,17 +15,16 @@
 
 class PCViewer {
 public:
-  PCViewer(const XnChar* config_file);
+  PCViewer(HandProcessor& hand_processor);
   void run();
 private:
-  xn::DepthGenerator depth_generator_;
-  xn::DepthMetaData depth_md_;
-  xn::Context ni_context_;
   pcl::visualization::CloudViewer viewer_;
+  XnUInt32 depth_xres_, depth_yres_;
+  float bad_point_;
+  float z_scale_, center_x_, center_y_;
 
-  void displayCloud(pcl::visualization::PCLVisualizer& viewer);
-  pcl::PointCloud<pcl::PointXYZ>::Ptr convertToXYZPointCloud (
-      const xn::DepthMetaData& depth);
+  void display_cb_(pcl::visualization::PCLVisualizer& viewer);
+
 };
 
 #endif /* PC_VIEWER_H_ */
