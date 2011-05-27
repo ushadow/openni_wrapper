@@ -22,25 +22,21 @@
 //---------------------------------------------------------------------------
 // Includes
 //---------------------------------------------------------------------------
-#include <XnOS.h>
-#include <XnCppWrapper.h>
+#include <pc_viewer.h>
 
-#include <math.h>
-#include <iostream>
+#include <string.h>
+
+#include <XnCppWrapper.h>
 
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 #include <pcl/visualization/cloud_viewer.h>
 
-//---------------------------------------------------------------------------
-// Defines
-//---------------------------------------------------------------------------
-#define SAMPLE_XML_PATH "../config/config.xml"
+#include <boost/bind.hpp>
 
 #define CHECK_RC(rc, what)                      \
   if (rc != XN_STATUS_OK) {                               \
     printf("%s failed: %s\n", what, xnGetStatusString(rc));   \
-    return rc;                          \
   }
 
 #define CHECK_ERRORS(rc, errors, what)    \
@@ -48,36 +44,55 @@
     XnChar strError[1024];        \
     errors.ToString(strError, 1024);  \
     printf("%s\n", strError);     \
-    return (rc);            \
   }
 
-//---------------------------------------------------------------------------
-// Globals
-//---------------------------------------------------------------------------
-xn::Context g_context;
-xn::DepthGenerator g_depth;
-xn::ImageGenerator g_image;
-xn::DepthMetaData g_depthMD;
-xn::ImageMetaData g_imageMD;
-xn::DepthMetaData g_bgMD;
+PCViewer::PCViewer(const XnChar* config_file) : viewer_("Point Cloud Viewer") {
+  XnStatus rc;
 
-//---------------------------------------------------------------------------
-// Code
-//---------------------------------------------------------------------------
-pcl::PointCloud<pcl::PointXYZ>::Ptr ConvertToXYZPointCloud (
+  xn::EnumerationErrors errors;
+  rc = ni_context_.InitFromXmlFile(config_file, &errors);
+  CHECK_ERRORS(rc, errors, "InitFromXmlFile");
+  CHECK_RC(rc, "InitFromXmlFile");
+
+  rc = ni_context_.FindExistingNode(XN_NODE_TYPE_DEPTH, depth_generator_);
+  CHECK_RC(rc, "Find depth generator");
+}
+
+void PCViewer::run() {
+  pcl::visualization::CloudViewer::VizCallable f = boost::bind(
+      &PCViewer::displayCloud, this, _1);
+  viewer_.runOnVisualizationThread(f);
+  while (!viewer_.wasStopped());
+}
+
+void PCViewer::displayCloud(pcl::visualization::PCLVisualizer& viewer) {
+  XnStatus rc = XN_STATUS_OK;
+
+  // Read a new frame
+  rc = ni_context_.WaitAnyUpdateAll();
+  CHECK_RC(rc, "Wait any update");
+
+  depth_generator_.GetMetaData(depth_md_);
+
+  viewer.removePointCloud();
+  viewer.addPointCloud(convertToXYZPointCloud(depth_md_));
+  viewer.setPointCloudRenderingProperties(
+      pcl::visualization::PCL_VISUALIZER_COLOR, 1.0, 0.0, 0.0);
+}
+
+pcl::PointCloud<pcl::PointXYZ>::Ptr PCViewer::convertToXYZPointCloud (
     const xn::DepthMetaData& depth) {
-   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud <pcl::PointXYZ>);
+   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud
+       (new pcl::PointCloud <pcl::PointXYZ>);
 
-   // TODO cloud->header.stamp = time;
-   cloud->height       = depth.YRes();
-   cloud->width        = depth.XRes();
-   cloud->is_dense     = false;
+   cloud->height = depth.YRes();
+   cloud->width = depth.XRes();
+   cloud->header.frame_id = depth.FrameID();
+   cloud->is_dense = true;
 
-   cloud->points.resize (cloud->height * cloud->width);
+   cloud->points.resize(cloud->height * cloud->width);
 
    register float constant = 1.0f / depth.XRes();
-
-   cloud->header.frame_id = depth.FrameID();
 
    register float centerX = (cloud->width >> 1 );
    float centerY = (cloud->height >> 1);
@@ -109,68 +124,4 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr ConvertToXYZPointCloud (
    return cloud;
  }
 
-pcl::PointCloud<pcl::PointXYZ>::Ptr GetCloud(void) {
-  XnStatus rc = XN_STATUS_OK;
 
-  // Read a new frame
-  rc = g_context.WaitAnyUpdateAll();
-//  if (rc != XN_STATUS_OK) {
-//    printf("Read failed: %s\n", xnGetStatusString(rc));
-//    return NULL;
-//  }
-
-  g_depth.GetMetaData(g_depthMD);
-  g_image.GetMetaData(g_imageMD);
-  if (g_depthMD.FrameID() == 1) {
-    g_bgMD.CopyFrom(g_depthMD);
-  }
-
-  XnDepthPixel* curr_depth = g_depthMD.WritableData();
-  const XnDepthPixel* bg_depth = g_bgMD.Data();
-//  for (XnUInt y = 0; y < g_depthMD.YRes(); ++y) {
-//    for (XnUInt x = 0; x < g_depthMD.XRes(); ++x, ++curr_depth, ++bg_depth) {
-//      *curr_depth = *bg_depth - *curr_depth;
-//    }
-//  }
-
-  return ConvertToXYZPointCloud(g_depthMD);
-}
-
-int main(int argc, char* argv[]) {
-  XnStatus rc;
-
-  xn::EnumerationErrors errors;
-  rc = g_context.InitFromXmlFile(SAMPLE_XML_PATH, &errors);
-  CHECK_ERRORS(rc, errors, "InitFromXmlFile");
-  CHECK_RC(rc, "InitFromXmlFile");
-
-  rc = g_context.FindExistingNode(XN_NODE_TYPE_DEPTH, g_depth);
-  CHECK_RC(rc, "Find depth generator");
-  rc = g_context.FindExistingNode(XN_NODE_TYPE_IMAGE, g_image);
-  CHECK_RC(rc, "Find hands generator");
-
-  g_depth.GetMetaData(g_depthMD);
-  g_image.GetMetaData(g_imageMD);
-
-  // Hybrid mode isn't supported in this sample
-  if (g_imageMD.FullXRes() != g_depthMD.FullXRes() || g_imageMD.FullYRes()
-      != g_depthMD.FullYRes()) {
-    printf("The device depth and image resolution must be equal!\n");
-    return 1;
-  }
-
-  // RGB is the only image format supported.
-  if (g_imageMD.PixelFormat() != XN_PIXEL_FORMAT_RGB24) {
-    printf("The device image format must be RGB24\n");
-    return 1;
-  }
-
-  pcl::visualization::CloudViewer viewer("Kinect");
-  while (true) {
-    viewer.showCloud(GetCloud());
-    if (viewer.wasStopped())
-      break;
-  }
-
-  return 0;
-}

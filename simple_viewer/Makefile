@@ -2,8 +2,8 @@ OSTYPE := $(shell uname -s)
 
 BIN_DIR = ../bin
 
-INC_DIRS = /usr/include/ni /usr/include/pcl-1.0 /usr/include/eigen3 \
-					 /usr/include/vtk-5.4
+INC_DIRS = . /usr/include/ni /usr/include/pcl-1.0 /usr/include/eigen3 \
+					 /usr/include/vtk-5.4 /usr/include/boost
 
 SRC_FILES = *.cpp
 

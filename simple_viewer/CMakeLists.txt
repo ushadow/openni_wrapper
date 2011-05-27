@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
+project(simple_viewer)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
+find_package(PCL 1.0 REQUIRED COMPONENTS visualization)
+include_directories(${PCL_INCLUDE_DIRS})
+add_executable(simple_viewer simple_viewer.cpp)
+target_link_libraries(simple_viewer ${PCL_VISUALIZATION_LIBRARIES})

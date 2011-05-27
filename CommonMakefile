@@ -85,7 +85,7 @@ ifneq ("$(TARGET_SYS_ROOT)","/")
 endif
 
 # define the intermediate directory
-INT_DIR = $(CFG)
+INT_DIR = $(BIN_DIR)/$(CFG)/$(EXE_NAME)
 
 # define output directory
 OUT_DIR = $(BIN_DIR)

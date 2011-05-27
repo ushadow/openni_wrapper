@@ -1,5 +1,5 @@
 bin
-.externalToolBuilders
+build
 Release
 Debug
 data
