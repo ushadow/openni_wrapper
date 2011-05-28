@@ -31,7 +31,7 @@ HandProcessor::HandProcessor(const XnChar* config_file) {
   depth_generator_.GetMetaData(depth_md_);
 }
 
-void HandProcessor::nextDepthCloud() {
+const xn::DepthMetaData* HandProcessor::nextDepthMD() {
   XnStatus rc = XN_STATUS_OK;
 
   // Read a new frame
@@ -39,38 +39,17 @@ void HandProcessor::nextDepthCloud() {
   CHECK_RC(rc, "Wait any update");
 
   depth_generator_.GetMetaData(depth_md_);
-}
-
-void PCViewer::convertToXYZPointCloud (const xn::DepthMetaData& depth_md,
-    pcl::PointCloud<pcl::PointXYZ>::Ptr depth_cloud) {
-
-  // we have to use Data, since operator[] uses assert -> Debug-mode very slow!
-  register const XnDepthPixel* depth_map = depth.Data();
-
-  depth_cloud->height = depth_md.YRes();
-  depth_cloud->width = depth_md.XRes();
-  depth_cloud->is_dense = true;
-  depth_cloud->points.resize(depth_cloud->height * depth_cloud->width);
+  if (depth_md_.FrameID() == 1)
+    bg_md_.CopyFrom(depth_md_);
 
   register int depth_idx = 0;
-  for (float v = -center_y_; v < center_y_; v += 1.0) {
-  for (register float u = -center_x_; u < center_x_; u += 1.0, ++depth_idx) {
-   register double z = depth_map[depth_idx] * 0.001;
-   pcl::PointXYZ& pt = cloud_->points[depth_idx];
-   // Check for invalid measurements
-   if (depth_map[depth_idx] == 0) {
-     // not valid
-     pt.x = pt.y = pt.z = bad_point_;
-     continue;
-   }
-
-   register double z_d = z * z_scale_;
-   // Fill in XYZ
-   pt.x = u * z_d;
-   pt.y = v * z_d;
-   pt.z = -z;
-  }
-  }
-  return cloud_;
+  register XnDepthPixel* depth_map = depth_md_.WritableData();
+  register const XnDepthPixel* bg_map = bg_md_.Data();
+  for (XnUInt y = 0; y < depth_md_.YRes(); y++)
+    for (XnUInt x = 0; x < depth_md_.XRes(); x++, depth_idx++) {
+      if (bg_map[depth_idx] - depth_map[depth_idx] < 12)
+        depth_map[depth_idx] = 0;
+    }
+  return &depth_md_;
 }
 
