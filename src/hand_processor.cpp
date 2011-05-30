@@ -29,6 +29,8 @@ HandProcessor::HandProcessor(const XnChar* config_file) {
   rc = ni_context_.FindExistingNode(XN_NODE_TYPE_DEPTH, depth_generator_);
   CHECK_RC(rc, "Find depth generator");
   depth_generator_.GetMetaData(depth_md_);
+  depth_height_ = depth_md_.YRes();
+  depth_width_ = depth_md_.XRes();
 }
 
 const xn::DepthMetaData* HandProcessor::nextDepthMD() {
@@ -47,9 +49,17 @@ const xn::DepthMetaData* HandProcessor::nextDepthMD() {
   register const XnDepthPixel* bg_map = bg_md_.Data();
   for (XnUInt y = 0; y < depth_md_.YRes(); y++)
     for (XnUInt x = 0; x < depth_md_.XRes(); x++, depth_idx++) {
-      if (bg_map[depth_idx] - depth_map[depth_idx] < 12)
+      if (bg_map[depth_idx] - depth_map[depth_idx] <= 0)
         depth_map[depth_idx] = 0;
     }
   return &depth_md_;
 }
 
+int HandProcessor::depth_height() const {
+  return depth_height_;
+}
+
+int HandProcessor::depth_width() const {
+  return depth_width_;
+}
+}

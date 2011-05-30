@@ -46,13 +46,14 @@ void PCViewer::run() {
 
 void PCViewer::display_cb_(pcl::visualization::PCLVisualizer& viewer) {
   const xn::DepthMetaData* depth_md = hand_processor_->nextDepthMD();
-  int viewport0, viewport1;
-  viewer.createViewPort(0.0, 0.0, 0.5, 1.0, viewport0);
-  viewer.createViewPort(0.5, 0.0, 1.0, 1.0, viewport1);
-  viewer.removePointCloud("cloud", viewport0);
-  viewer.addPointCloud(convertToXYZPointCloud(*depth_md), "cloud", viewport0);
+  viewer.removePointCloud("cloud");
+  viewer.addPointCloud(convertToXYZPointCloud(*depth_md), "cloud");
   viewer.setPointCloudRenderingProperties(
       pcl::visualization::PCL_VISUALIZER_COLOR, 1.0, 0.0, 0.0);
+  std::stringstream ss;
+  ss << "Frame: " << depth_md->FrameID();
+  viewer.removeShape("text", 0);
+  viewer.addText(ss.str(), 200, 300, "text", 0);
 }
 
 pcl::PointCloud<pcl::PointXYZ>::Ptr PCViewer::convertToXYZPointCloud(
