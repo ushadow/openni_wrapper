@@ -85,7 +85,7 @@ ifneq ("$(TARGET_SYS_ROOT)","/")
 endif
 
 # define the intermediate directory
-INT_DIR = $(BIN_DIR)/$(CFG)/$(EXE_NAME)
+INT_DIR = $(CFG)
 
 # define output directory
 OUT_DIR = $(BIN_DIR)
@@ -124,7 +124,7 @@ DEFINES_OPTION = $(foreach def,$(DEFINES),-D$(def))
 
 # some lib / exe specifics
 ifneq "$(LIB_NAME)" ""
-	CFLAGS += -fPIC -fvisibility=hidden
+	CFLAGS += -fPIC
 	ifneq ("$(OSTYPE)","Darwin")
 		OUTPUT_NAME = lib$(LIB_NAME).so
 		OUTPUT_COMMAND = $(CC) -o $(OUTPUT_FILE) $(OBJ_FILES) $(LDFLAGS) -shared

@@ -4,7 +4,7 @@
  *  Created on: May 27, 2011
  *      Author: yingyin
  */
-#include <hand_processor.h>
+#include <openni_wrapper.h>
 
 #define CHECK_RC(rc, what)                      \
   if (rc != XN_STATUS_OK) {                               \
@@ -18,7 +18,7 @@
     printf("%s\n", strError);     \
   }
 
-HandProcessor::HandProcessor(const XnChar* config_file) {
+int OpenNIWrapper::initFromXmlFile(const XnChar* config_file) {
   XnStatus rc;
 
   xn::EnumerationErrors errors;
@@ -33,7 +33,7 @@ HandProcessor::HandProcessor(const XnChar* config_file) {
   depth_width_ = depth_md_.XRes();
 }
 
-const xn::DepthMetaData* HandProcessor::nextDepthMD() {
+const xn::DepthMetaData* OpenNIWrapper::nextDepthMD() {
   XnStatus rc = XN_STATUS_OK;
 
   // Read a new frame
@@ -55,11 +55,11 @@ const xn::DepthMetaData* HandProcessor::nextDepthMD() {
   return &depth_md_;
 }
 
-int HandProcessor::depth_height() const {
+int OpenNIWrapper::depth_height() const {
   return depth_height_;
 }
 
-int HandProcessor::depth_width() const {
+int OpenNIWrapper::depth_width() const {
   return depth_width_;
 }
-}
+

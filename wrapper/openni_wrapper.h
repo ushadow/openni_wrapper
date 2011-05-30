@@ -2,11 +2,11 @@
 #define HAND_PROCESSOR_H_
 
 #include <XnCppWrapper.h>
-#include <pcl/visualization/cloud_viewer.h>
 
-class HandProcessor {
+class OpenNIWrapper {
 public:
-  HandProcessor(const XnChar* config_file);
+  OpenNIWrapper();
+  bool initFromXmlFile(const XnChar* config_file) {};
   const xn::DepthMetaData* nextDepthMD();
   int depth_height() const;
   int depth_width() const;

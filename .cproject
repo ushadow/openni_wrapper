@@ -27,6 +27,7 @@
 									<listOptionValue builtIn="false" value="/usr/include/openni"/>
 									<listOptionValue builtIn="false" value="/usr/include/pcl-1.0"/>
 									<listOptionValue builtIn="false" value="/usr/include/boost"/>
+									<listOptionValue builtIn="false" value="/usr/lib/jvm/java-6-sun-1.6.0.24/include"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.322372208" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
