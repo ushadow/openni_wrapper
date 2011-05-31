@@ -9,12 +9,12 @@ public:
   OpenNIWrapper() {};
   bool initFromXmlFile(const XnChar* config_file);
   bool waitAnyUpdateAll();
-  const xn::DepthMetaData* nextDepthMD();
+  void getDepthMap(int* depth_buf);
   int depth_height() const;
   int depth_width() const;
 private:
   xn::DepthGenerator depth_generator_;
-  xn::DepthMetaData depth_md_, bg_md_;
+  xn::DepthMetaData depth_md_;
   xn::Context ni_context_;
   XnUInt32 depth_height_, depth_width_;
 

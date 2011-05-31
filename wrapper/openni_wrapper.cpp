@@ -39,20 +39,15 @@ bool OpenNIWrapper::waitAnyUpdateAll() {
   return true;
 }
 
-const xn::DepthMetaData* OpenNIWrapper::nextDepthMD() {
+void OpenNIWrapper::getDepthMD(int* depth_buf) {
   depth_generator_.GetMetaData(depth_md_);
-  if (depth_md_.FrameID() == 1)
-    bg_md_.CopyFrom(depth_md_);
 
   register int depth_idx = 0;
-  register XnDepthPixel* depth_map = depth_md_.WritableData();
-  register const XnDepthPixel* bg_map = bg_md_.Data();
+  const XnDepthPixel* depth_map = depth_md_.Data();
   for (XnUInt y = 0; y < depth_md_.YRes(); y++)
     for (XnUInt x = 0; x < depth_md_.XRes(); x++, depth_idx++) {
-      if (bg_map[depth_idx] - depth_map[depth_idx] <= 0)
-        depth_map[depth_idx] = 0;
+      depth_buf[depth_idx] = depth_map[depth_idx];
     }
-  return &depth_md_;
 }
 
 int OpenNIWrapper::depth_height() const {
