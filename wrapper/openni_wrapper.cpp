@@ -29,13 +29,17 @@ bool OpenNIWrapper::initFromXmlFile(const XnChar* config_file) {
   return true;
 }
 
-const xn::DepthMetaData* OpenNIWrapper::nextDepthMD() {
+bool OpenNIWrapper::waitAnyUpdateAll() {
   XnStatus rc = XN_STATUS_OK;
 
   // Read a new frame
   rc = ni_context_.WaitAnyUpdateAll();
-  checkRC(rc, "Wait any update");
+  if (!checkRC(rc, "Wait any update"))
+    return false;
+  return true;
+}
 
+const xn::DepthMetaData* OpenNIWrapper::nextDepthMD() {
   depth_generator_.GetMetaData(depth_md_);
   if (depth_md_.FrameID() == 1)
     bg_md_.CopyFrom(depth_md_);

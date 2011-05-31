@@ -7,6 +7,10 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#undef edu_mit_yingyin_tabletop_OpenNIWrapper_DEPTH_WIDTH
+#define edu_mit_yingyin_tabletop_OpenNIWrapper_DEPTH_WIDTH 640L
+#undef edu_mit_yingyin_tabletop_OpenNIWrapper_DEPTH_HEIGHT
+#define edu_mit_yingyin_tabletop_OpenNIWrapper_DEPTH_HEIGHT 480L
 /*
  * Class:     edu_mit_yingyin_tabletop_OpenNIWrapper
  * Method:    initFromXmlFile
@@ -14,6 +18,22 @@ extern "C" {
  */
 JNIEXPORT jboolean JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_initFromXmlFile
   (JNIEnv *, jobject, jobject, jstring);
+
+/*
+ * Class:     edu_mit_yingyin_tabletop_OpenNIWrapper
+ * Method:    waitAnyUpdateAll
+ * Signature: (Ljava/nio/IntBuffer;)Z
+ */
+JNIEXPORT jboolean JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_waitAnyUpdateAll
+  (JNIEnv *, jobject, jobject);
+
+/*
+ * Class:     edu_mit_yingyin_tabletop_OpenNIWrapper
+ * Method:    getDepthMap
+ * Signature: (Ljava/nio/IntBuffer;Ljava/nio/IntBuffer;II)V
+ */
+JNIEXPORT void JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_getDepthMap
+  (JNIEnv *, jobject, jobject, jobject, jint, jint);
 
 #ifdef __cplusplus
 }

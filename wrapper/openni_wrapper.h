@@ -8,6 +8,7 @@ class OpenNIWrapper {
 public:
   OpenNIWrapper() {};
   bool initFromXmlFile(const XnChar* config_file);
+  bool waitAnyUpdateAll();
   const xn::DepthMetaData* nextDepthMD();
   int depth_height() const;
   int depth_width() const;
@@ -32,8 +33,8 @@ inline bool OpenNIWrapper::checkRC(XnStatus rc, const char* what) {
 }
 
 inline bool OpenNIWrapper::checkErrors(XnStatus rc,
-                                      xn::EnumerationErrors& errors,
-                                      const char* what) {
+                                       xn::EnumerationErrors& errors,
+                                       const char* what) {
   bool success = true;
   if (rc == XN_STATUS_NO_NODE_PRESENT) {
     XnChar strError[1024];

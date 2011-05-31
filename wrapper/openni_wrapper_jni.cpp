@@ -17,3 +17,12 @@ JNIEXPORT jboolean JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_initFromX
   *wrapper = new OpenNIWrapper();
   return (*wrapper)->initFromXmlFile(strbuf);
 }
+
+JNIEXPORT jboolean JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_waitAnyUpdateAll
+  (JNIEnv *env, jobject obj, jobject ctrl_block) {
+  OpenNIWrapper* wrapper =
+      *((OpenNIWrapper**)env->GetDirectBufferAddress(ctrl_block));
+  return wrapper->waitAnyUpdateAll();
+}
+
+
