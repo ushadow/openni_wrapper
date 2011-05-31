@@ -5,32 +5,28 @@
  *      Author: yingyin
  */
 #include <openni_wrapper.h>
+#include <stdlib.h>
 
-#define CHECK_RC(rc, what)                      \
-  if (rc != XN_STATUS_OK) {                               \
-    printf("%s failed: %s\n", what, xnGetStatusString(rc));   \
-  }
-
-#define CHECK_ERRORS(rc, errors, what)    \
-  if (rc == XN_STATUS_NO_NODE_PRESENT) {                   \
-    XnChar strError[1024];        \
-    errors.ToString(strError, 1024);  \
-    printf("%s\n", strError);     \
-  }
-
-int OpenNIWrapper::initFromXmlFile(const XnChar* config_file) {
+bool OpenNIWrapper::initFromXmlFile(const XnChar* config_file) {
   XnStatus rc;
 
   xn::EnumerationErrors errors;
+  printf("file = %s\n", config_file);
   rc = ni_context_.InitFromXmlFile(config_file, &errors);
-  CHECK_ERRORS(rc, errors, "InitFromXmlFile");
-  CHECK_RC(rc, "InitFromXmlFile");
+  if (!checkErrors(rc, errors, "InitFromXmlFile"))
+    return false;
+  printf("rc = %u\n", rc);
+  if (!checkRC(rc, "InitFromXmlFile"))
+    return false;
 
   rc = ni_context_.FindExistingNode(XN_NODE_TYPE_DEPTH, depth_generator_);
-  CHECK_RC(rc, "Find depth generator");
+  if (!checkRC(rc, "Find depth generator"))
+    return false;
   depth_generator_.GetMetaData(depth_md_);
   depth_height_ = depth_md_.YRes();
   depth_width_ = depth_md_.XRes();
+  fflush(stdout);
+  return true;
 }
 
 const xn::DepthMetaData* OpenNIWrapper::nextDepthMD() {
@@ -38,7 +34,7 @@ const xn::DepthMetaData* OpenNIWrapper::nextDepthMD() {
 
   // Read a new frame
   rc = ni_context_.WaitAnyUpdateAll();
-  CHECK_RC(rc, "Wait any update");
+  checkRC(rc, "Wait any update");
 
   depth_generator_.GetMetaData(depth_md_);
   if (depth_md_.FrameID() == 1)

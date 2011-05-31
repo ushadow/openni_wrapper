@@ -1,12 +1,13 @@
 #ifndef HAND_PROCESSOR_H_
 #define HAND_PROCESSOR_H_
 
+#include <string>
 #include <XnCppWrapper.h>
 
 class OpenNIWrapper {
 public:
-  OpenNIWrapper();
-  bool initFromXmlFile(const XnChar* config_file) {};
+  OpenNIWrapper() {};
+  bool initFromXmlFile(const XnChar* config_file);
   const xn::DepthMetaData* nextDepthMD();
   int depth_height() const;
   int depth_width() const;
@@ -15,6 +16,31 @@ private:
   xn::DepthMetaData depth_md_, bg_md_;
   xn::Context ni_context_;
   XnUInt32 depth_height_, depth_width_;
+
+  bool checkRC(XnStatus rc, const char* what);
+  bool checkErrors(XnStatus rc, xn::EnumerationErrors& errors,
+                  const char* what);
 };
 
+inline bool OpenNIWrapper::checkRC(XnStatus rc, const char* what) {
+  bool success = true;
+  if (rc != XN_STATUS_OK) {
+    printf("%s failed: %s\n", what, xnGetStatusString(rc));
+    success = false;
+  }
+  return success;
+}
+
+inline bool OpenNIWrapper::checkErrors(XnStatus rc,
+                                      xn::EnumerationErrors& errors,
+                                      const char* what) {
+  bool success = true;
+  if (rc == XN_STATUS_NO_NODE_PRESENT) {
+    XnChar strError[1024];
+    errors.ToString(strError, 1024);
+    printf("%s\n", strError);
+    success = false;
+  }
+  return success;
+}
 #endif // HAND_PROCESSOR_H_
