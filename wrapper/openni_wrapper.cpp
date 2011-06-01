@@ -11,11 +11,9 @@ bool OpenNIWrapper::initFromXmlFile(const XnChar* config_file) {
   XnStatus rc;
 
   xn::EnumerationErrors errors;
-  printf("file = %s\n", config_file);
   rc = ni_context_.InitFromXmlFile(config_file, &errors);
   if (!checkErrors(rc, errors, "InitFromXmlFile"))
     return false;
-  printf("rc = %u\n", rc);
   if (!checkRC(rc, "InitFromXmlFile"))
     return false;
 
@@ -39,15 +37,16 @@ bool OpenNIWrapper::waitAnyUpdateAll() {
   return true;
 }
 
-void OpenNIWrapper::getDepthMD(int* depth_buf) {
+void OpenNIWrapper::getDepthMap(int* depth_buf) {
   depth_generator_.GetMetaData(depth_md_);
 
   register int depth_idx = 0;
   const XnDepthPixel* depth_map = depth_md_.Data();
-  for (XnUInt y = 0; y < depth_md_.YRes(); y++)
+  for (XnUInt y = 0; y < depth_md_.YRes(); y++) {
     for (XnUInt x = 0; x < depth_md_.XRes(); x++, depth_idx++) {
       depth_buf[depth_idx] = depth_map[depth_idx];
     }
+  }
 }
 
 int OpenNIWrapper::depth_height() const {
@@ -58,3 +57,8 @@ int OpenNIWrapper::depth_width() const {
   return depth_width_;
 }
 
+void OpenNIWrapper::cleanUp() {
+  ni_context_.Shutdown();
+  printf("OpenNI cleaned up.");
+  fflush(stdout);
+}

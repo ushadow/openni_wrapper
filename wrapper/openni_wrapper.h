@@ -12,6 +12,7 @@ public:
   void getDepthMap(int* depth_buf);
   int depth_height() const;
   int depth_width() const;
+  void cleanUp();
 private:
   xn::DepthGenerator depth_generator_;
   xn::DepthMetaData depth_md_;

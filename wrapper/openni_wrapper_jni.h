@@ -30,10 +30,18 @@ JNIEXPORT jboolean JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_waitAnyUp
 /*
  * Class:     edu_mit_yingyin_tabletop_OpenNIWrapper
  * Method:    getDepthMap
- * Signature: (Ljava/nio/IntBuffer;Ljava/nio/IntBuffer;II)V
+ * Signature: (Ljava/nio/IntBuffer;Ljava/nio/IntBuffer;)V
  */
 JNIEXPORT void JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_getDepthMap
-  (JNIEnv *, jobject, jobject, jobject, jint, jint);
+  (JNIEnv *, jobject, jobject, jobject);
+
+/*
+ * Class:     edu_mit_yingyin_tabletop_OpenNIWrapper
+ * Method:    cleanUp
+ * Signature: (Ljava/nio/IntBuffer;)V
+ */
+JNIEXPORT void JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_cleanUp
+  (JNIEnv *, jobject, jobject);
 
 #ifdef __cplusplus
 }

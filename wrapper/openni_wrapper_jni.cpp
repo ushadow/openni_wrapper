@@ -29,5 +29,13 @@ JNIEXPORT void JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_getDepthMap
   (JNIEnv *env, jobject obj, jobject ctrl_block, jobject depth_buf) {
   OpenNIWrapper* wrapper =
       *((OpenNIWrapper**)env->GetDirectBufferAddress(ctrl_block));
-  wrapper->GetDepthMap((int*)env->GetDirectBufferAddress(depth_buf));
+  wrapper->getDepthMap((int*)env->GetDirectBufferAddress(depth_buf));
+}
+
+JNIEXPORT void JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_cleanUp
+  (JNIEnv *env, jobject obj, jobject ctrl_block) {
+  OpenNIWrapper* wrapper =
+        *((OpenNIWrapper**)env->GetDirectBufferAddress(ctrl_block));
+  wrapper->cleanUp();
+  delete wrapper;
 }
