@@ -59,6 +59,6 @@ int OpenNIWrapper::depth_width() const {
 
 void OpenNIWrapper::cleanUp() {
   ni_context_.Shutdown();
-  printf("OpenNI cleaned up.");
+  printf("OpenNI cleaned up.\n");
   fflush(stdout);
 }
