@@ -63,8 +63,15 @@ void OpenNIWrapper::cleanUp() {
   fflush(stdout);
 }
 
+/**
+ * Converts the points with depth information from projective to world
+ * coordinates.
+ *
+ * param pointsp[] points (x, y, z) stored in an array. The size of the array
+ *                 must be 3 * number of points.
+ */
 void OpenNIWrapper::convertDepthProjectiveToWorld(float points[]) {
-  int num_points = sizeof(points);
+  int num_points = sizeof(points) / 3;
   XnPoint3D *xn_pts = new XnPoint3D[num_points];
   for (int i = 0; i < num_points; i++)
     xn_pts[i] = {points[i * 3], points[i * 3 + 1], points[i * 3 + 2]};
@@ -74,5 +81,5 @@ void OpenNIWrapper::convertDepthProjectiveToWorld(float points[]) {
     points[i * 3 + 1] = xn_pts[i].Y;
     points[i * 3 + 2] = xn_pts[i].Z;
   }
-  delete[] xn_points;
+  delete[] xn_pts;
 }

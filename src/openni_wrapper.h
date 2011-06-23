@@ -41,7 +41,7 @@ inline bool OpenNIWrapper::checkErrors(XnStatus rc,
   if (rc == XN_STATUS_NO_NODE_PRESENT) {
     XnChar strError[1024];
     errors.ToString(strError, 1024);
-    printf("%s\n", strError);
+    printf("%s failed: %s\n", what, strError);
     success = false;
   }
   return success;
