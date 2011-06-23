@@ -62,3 +62,17 @@ void OpenNIWrapper::cleanUp() {
   printf("OpenNI cleaned up.\n");
   fflush(stdout);
 }
+
+void OpenNIWrapper::convertDepthProjectiveToWorld(float points[]) {
+  int num_points = sizeof(points);
+  XnPoint3D *xn_pts = new XnPoint3D[num_points];
+  for (int i = 0; i < num_points; i++)
+    xn_pts[i] = {points[i * 3], points[i * 3 + 1], points[i * 3 + 2]};
+  depth_generator_.ConvertProjectiveToRealWorld(num_points, xn_pts, xn_pts);
+  for (int i = 0; i < num_points; i++) {
+    points[i * 3] = xn_pts[i].X;
+    points[i * 3 + 1] = xn_pts[i].Y;
+    points[i * 3 + 2] = xn_pts[i].Z;
+  }
+  delete[] xn_points;
+}

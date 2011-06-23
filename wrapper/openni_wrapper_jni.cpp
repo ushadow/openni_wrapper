@@ -39,3 +39,11 @@ JNIEXPORT void JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_cleanUp
   wrapper->cleanUp();
   delete wrapper;
 }
+
+JNIEXPORT void JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_convertDepthProjectiveToWorld
+  (JNIEnv *env, jobject obj, jobject ctrl_block, jobject points) {
+  OpenNIWrapper* wrapper =
+      *((OpenNIWrapper**)env->GetDirectBufferAddress(ctrl_block));
+  wrapper->convertDepthProjectiveToWorld(
+      (float*)env->GetDirectBufferAddress(points));
+}

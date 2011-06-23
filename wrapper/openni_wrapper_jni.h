@@ -43,6 +43,14 @@ JNIEXPORT void JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_getDepthMap
 JNIEXPORT void JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_cleanUp
   (JNIEnv *, jobject, jobject);
 
+/*
+ * Class:     edu_mit_yingyin_tabletop_OpenNIWrapper
+ * Method:    convertDepthProjectiveToWorld
+ * Signature: (Ljava/nio/IntBuffer;Ljava/nio/FloatBuffer;)V
+ */
+JNIEXPORT void JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_convertDepthProjectiveToWorld
+  (JNIEnv *, jobject, jobject, jobject);
+
 #ifdef __cplusplus
 }
 #endif

@@ -13,6 +13,7 @@ public:
   int depth_height() const;
   int depth_width() const;
   void cleanUp();
+  void convertDepthProjectiveToWorld(float points[]);
 private:
   xn::DepthGenerator depth_generator_;
   xn::DepthMetaData depth_md_;
@@ -21,7 +22,7 @@ private:
 
   bool checkRC(XnStatus rc, const char* what);
   bool checkErrors(XnStatus rc, xn::EnumerationErrors& errors,
-                  const char* what);
+                   const char* what);
 };
 
 inline bool OpenNIWrapper::checkRC(XnStatus rc, const char* what) {
