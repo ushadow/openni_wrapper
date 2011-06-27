@@ -13,6 +13,14 @@ extern "C" {
 #define edu_mit_yingyin_tabletop_OpenNIWrapper_DEPTH_HEIGHT 480L
 /*
  * Class:     edu_mit_yingyin_tabletop_OpenNIWrapper
+ * Method:    loadFile
+ * Signature: (Ljava/lang/String;Ljava/nio/IntBuffer;I)V
+ */
+JNIEXPORT void JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_loadFile
+  (JNIEnv *, jclass, jstring, jobject, jint);
+
+/*
+ * Class:     edu_mit_yingyin_tabletop_OpenNIWrapper
  * Method:    initFromXmlFile
  * Signature: (Ljava/nio/IntBuffer;Ljava/lang/String;)Z
  */

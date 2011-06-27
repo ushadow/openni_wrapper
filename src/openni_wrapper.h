@@ -3,9 +3,12 @@
 
 #include <string>
 #include <XnCppWrapper.h>
+#include <XnOS.h>
 
 class OpenNIWrapper {
 public:
+  static bool loadFile(const XnChar* file_name, void* buffer,
+                      const XnUInt32 buffer_size);
   OpenNIWrapper() {};
   bool initFromXmlFile(const XnChar* config_file);
   bool waitAnyUpdateAll();
@@ -15,14 +18,14 @@ public:
   void cleanUp();
   void convertDepthProjectiveToWorld(float points[]);
 private:
+  static bool checkRC(XnStatus rc, const char* what);
+  static bool checkErrors(XnStatus rc, xn::EnumerationErrors& errors,
+                   const char* what);
+
   xn::DepthGenerator depth_generator_;
   xn::DepthMetaData depth_md_;
   xn::Context ni_context_;
   XnUInt32 depth_height_, depth_width_;
-
-  bool checkRC(XnStatus rc, const char* what);
-  bool checkErrors(XnStatus rc, xn::EnumerationErrors& errors,
-                   const char* what);
 };
 
 inline bool OpenNIWrapper::checkRC(XnStatus rc, const char* what) {
@@ -46,4 +49,13 @@ inline bool OpenNIWrapper::checkErrors(XnStatus rc,
   }
   return success;
 }
+
+inline bool OpenNIWrapper::loadFile(const XnChar* file_name, void* buffer,
+                                   const XnUInt32 buffer_size) {
+  XnStatus ret = xnOSLoadFile(file_name, buffer, buffer_size);
+  if (!checkRC(ret, "Load file."))
+    return false;
+  return true;
+}
+
 #endif // HAND_PROCESSOR_H_
