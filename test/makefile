@@ -17,8 +17,6 @@ EXE_NAME = openni_wrapper_unittest
 
 USED_LIBS += OpenNI
 
-LIB_DIRS += $(GTEST_DIR)/make
-
-CFLAGS = -Wno-deprecated
+CFLAGS = -Wno-deprecated -std=gnu++0x
 
 include ../CommonMakefile
