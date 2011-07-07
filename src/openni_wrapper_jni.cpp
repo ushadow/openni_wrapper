@@ -53,6 +53,7 @@ JNIEXPORT void JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_loadFile
   char strbuf[128];
   int len = env->GetStringLength(file_name);
   env->GetStringUTFRegion(file_name, 0, len, strbuf);
-  OpenNIWrapper::loadFile(strbuf, (int*)env->GetDirectBufferAddress(buffer),
+  OpenNIWrapper::loadFile(strbuf,
+                          (int*)env->GetDirectBufferAddress(buffer),
                           size);
 }

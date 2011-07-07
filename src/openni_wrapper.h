@@ -7,8 +7,8 @@
 
 class OpenNIWrapper {
 public:
-  static bool loadFile(const XnChar* file_name, void* buffer,
-                      const XnUInt32 buffer_size);
+  static bool loadFile(const XnChar* file_name, int* buffer,
+                       const XnUInt32 buffer_size);
   OpenNIWrapper() {};
   bool initFromXmlFile(const XnChar* config_file);
   bool waitAnyUpdateAll();
@@ -50,11 +50,16 @@ inline bool OpenNIWrapper::checkErrors(XnStatus rc,
   return success;
 }
 
-inline bool OpenNIWrapper::loadFile(const XnChar* file_name, void* buffer,
-                                   const XnUInt32 buffer_size) {
-  XnStatus ret = xnOSLoadFile(file_name, buffer, buffer_size);
+inline bool OpenNIWrapper::loadFile(const XnChar* file_name,
+                                    int* buffer,
+                                    const XnUInt32 buffer_size) {
+  XnDepthPixel *depth_buffer = new XnDepthPixel[buffer_size];
+  // The third parameter of xnOSLoadFile is number of bytes.
+  XnStatus ret = xnOSLoadFile(file_name, depth_buffer, buffer_size * 2);
   if (!checkRC(ret, "Load file."))
     return false;
+  for (int i = 0; i < buffer_size; i++)
+    buffer[i] = depth_buffer[i];
   return true;
 }
 
