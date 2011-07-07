@@ -47,3 +47,12 @@ JNIEXPORT void JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_convertDepthP
   wrapper->convertDepthProjectiveToWorld(
       (float*)env->GetDirectBufferAddress(points));
 }
+
+JNIEXPORT void JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_loadFile
+  (JNIEnv *env, jclass c, jstring file_name, jobject buffer, jint size) {
+  char strbuf[128];
+  int len = env->GetStringLength(file_name);
+  env->GetStringUTFRegion(file_name, 0, len, strbuf);
+  OpenNIWrapper::loadFile(strbuf, (int*)env->GetDirectBufferAddress(buffer),
+                          size);
+}
