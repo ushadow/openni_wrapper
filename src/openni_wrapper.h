@@ -7,6 +7,16 @@
 
 class OpenNIWrapper {
 public:
+  /**
+   * Loads a .raw file and reads the content into a buffer.
+   *
+   * Args:
+   *    file_name: name of the file to load.
+   *    buffer: pointer to an int array.
+   *    buffer_size: size of the buffer.
+   * Returns:
+   *    True if loading is successful.
+   */
   static bool loadFile(const XnChar* file_name, int* buffer,
                        const XnUInt32 buffer_size);
   OpenNIWrapper() {};
@@ -53,6 +63,7 @@ inline bool OpenNIWrapper::checkErrors(XnStatus rc,
 inline bool OpenNIWrapper::loadFile(const XnChar* file_name,
                                     int* buffer,
                                     const XnUInt32 buffer_size) {
+  // Depth value is 16-bit.
   XnDepthPixel *depth_buffer = new XnDepthPixel[buffer_size];
   // The third parameter of xnOSLoadFile is number of bytes.
   XnStatus ret = xnOSLoadFile(file_name, depth_buffer, buffer_size * 2);
