@@ -10,12 +10,10 @@ public:
   /**
    * Loads a .raw file and reads the content into a buffer.
    *
-   * Args:
-   *    file_name: name of the file to load.
-   *    buffer: pointer to an int array.
-   *    buffer_size: size of the buffer.
-   * Returns:
-   *    True if loading is successful.
+   * @param file_name name of the file to load.
+   * @param buffer pointer to an int array.
+   * @param buffer_size size of the buffer.
+   * @return true if loading is successful.
    */
   static bool loadFile(const XnChar* file_name, int* buffer,
                        const XnUInt32 buffer_size);
