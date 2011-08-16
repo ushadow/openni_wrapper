@@ -7,7 +7,7 @@ protected:
 
   virtual void SetUp() {
     openni.initFromXmlFile("/home/yingyin/workspace/tabletop/openni_wrapper/"
-        "test/config.xml");
+        "test/data/config.xml");
   }
 };
 

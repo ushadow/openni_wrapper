@@ -8,14 +8,20 @@
 #include "openni_wrapper.h"
 
 JNIEXPORT jboolean JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_initFromXmlFile
-  (JNIEnv *env, jobject obj, jobject ctrl_block, jstring config_file) {
+  (JNIEnv *env, jobject obj, jobject ctrl_block, jstring config_file,
+   jobject widthBuf, jobject heightBuf) {
   OpenNIWrapper** wrapper =
       (OpenNIWrapper**)env->GetDirectBufferAddress(ctrl_block);
   char strbuf[128];
   int len = env->GetStringLength(config_file);
   env->GetStringUTFRegion(config_file, 0, len, strbuf);
   *wrapper = new OpenNIWrapper();
-  return (*wrapper)->initFromXmlFile(strbuf);
+  bool ret = (*wrapper)->initFromXmlFile(strbuf);
+  int* width = (int*)env->GetDirectBufferAddress(widthBuf);
+  *width = (*wrapper)->depth_width();
+  int* height = (int*)env->GetDirectBufferAddress(heightBuf);
+  *height = (*wrapper)->depth_height();
+  return ret;
 }
 
 JNIEXPORT jboolean JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_waitAnyUpdateAll

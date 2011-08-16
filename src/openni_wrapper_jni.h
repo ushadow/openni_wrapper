@@ -22,10 +22,10 @@ JNIEXPORT void JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_loadFile
 /*
  * Class:     edu_mit_yingyin_tabletop_OpenNIWrapper
  * Method:    initFromXmlFile
- * Signature: (Ljava/nio/IntBuffer;Ljava/lang/String;)Z
+ * Signature: (Ljava/nio/IntBuffer;Ljava/lang/String;Ljava/nio/IntBuffer;Ljava/nio/IntBuffer;)Z
  */
 JNIEXPORT jboolean JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_initFromXmlFile
-  (JNIEnv *, jobject, jobject, jstring);
+  (JNIEnv *, jobject, jobject, jstring, jobject, jobject);
 
 /*
  * Class:     edu_mit_yingyin_tabletop_OpenNIWrapper
