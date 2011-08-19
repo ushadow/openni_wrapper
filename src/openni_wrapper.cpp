@@ -7,6 +7,8 @@
 #include <openni_wrapper.h>
 #include <stdlib.h>
 
+bool OpenNIWrapper::debug = false;
+
 bool OpenNIWrapper::initFromXmlFile(const XnChar* config_file) {
   XnStatus rc;
 
@@ -37,9 +39,8 @@ bool OpenNIWrapper::waitAnyUpdateAll() {
   return true;
 }
 
-void OpenNIWrapper::getDepthMap(int* depth_buf) {
+int OpenNIWrapper::getDepthMap(int* depth_buf) {
   depth_generator_.GetMetaData(depth_md_);
-
   register int depth_idx = 0;
   const XnDepthPixel* depth_map = depth_md_.Data();
   for (XnUInt y = 0; y < depth_md_.YRes(); y++) {
@@ -47,6 +48,12 @@ void OpenNIWrapper::getDepthMap(int* depth_buf) {
       depth_buf[depth_idx] = depth_map[depth_idx];
     }
   }
+  int frameID = depth_md_.FrameID();
+  if (debug) {
+    printf("Frame ID = %d\n", frameID);
+    fflush(stdout);
+  }
+  return frameID;
 }
 
 int OpenNIWrapper::depth_height() const {
@@ -63,13 +70,6 @@ void OpenNIWrapper::cleanUp() {
   fflush(stdout);
 }
 
-/**
- * Converts the points with depth information from projective to world
- * coordinates.
- *
- * param points[] points (x, y, z) stored in an array. The size of the array
- *                 must be 3 * number of points.
- */
 void OpenNIWrapper::convertDepthProjectiveToWorld(float points[]) {
   int num_points = sizeof(points) / 3;
   XnPoint3D *xn_pts = new XnPoint3D[num_points];
