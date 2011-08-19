@@ -22,6 +22,7 @@ public:
   OpenNIWrapper() {};
   bool initFromXmlFile(const XnChar* config_file);
   bool waitAnyUpdateAll();
+  bool waitDepthUpdateAll();
   /**
    * Fills the array with depth values in row-wise order.
    *
@@ -31,7 +32,7 @@ public:
   int getDepthMap(int* depth_buf);
   int depth_height() const;
   int depth_width() const;
-  void cleanUp();
+  void release();
   /**
    * Converts the points with depth information from projective to world
    * coordinates.

@@ -32,6 +32,13 @@ JNIEXPORT jboolean JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_waitAnyUp
   return wrapper->waitAnyUpdateAll();
 }
 
+JNIEXPORT jboolean JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_waitDepthUpdateAll
+  (JNIEnv *env, jobject obj, jobject ctrl_block) {
+  OpenNIWrapper* wrapper =
+      *((OpenNIWrapper**)env->GetDirectBufferAddress(ctrl_block));
+  return wrapper->waitDepthUpdateAll();
+}
+
 JNIEXPORT jint JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_getDepthMap
   (JNIEnv *env, jobject obj, jobject ctrl_block, jobject depth_buf) {
   OpenNIWrapper* wrapper =
@@ -39,11 +46,11 @@ JNIEXPORT jint JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_getDepthMap
   return wrapper->getDepthMap((int*)env->GetDirectBufferAddress(depth_buf));
 }
 
-JNIEXPORT void JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_cleanUp
+JNIEXPORT void JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_release
   (JNIEnv *env, jobject obj, jobject ctrl_block) {
   OpenNIWrapper* wrapper =
         *((OpenNIWrapper**)env->GetDirectBufferAddress(ctrl_block));
-  wrapper->cleanUp();
+  wrapper->release();
   delete wrapper;
 }
 

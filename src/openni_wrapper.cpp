@@ -39,6 +39,16 @@ bool OpenNIWrapper::waitAnyUpdateAll() {
   return true;
 }
 
+bool OpenNIWrapper::waitDepthUpdateAll() {
+  XnStatus rc = XN_STATUS_OK;
+
+  // Read a new frame
+  rc = ni_context_.WaitOneUpdateAll(depth_generator_);
+  if (!checkRC(rc, "Wait any update"))
+    return false;
+  return true;
+}
+
 int OpenNIWrapper::getDepthMap(int* depth_buf) {
   depth_generator_.GetMetaData(depth_md_);
   register int depth_idx = 0;
@@ -64,9 +74,9 @@ int OpenNIWrapper::depth_width() const {
   return depth_width_;
 }
 
-void OpenNIWrapper::cleanUp() {
+void OpenNIWrapper::release() {
   ni_context_.Shutdown();
-  printf("OpenNI cleaned up.\n");
+  printf("OpenNI released.\n");
   fflush(stdout);
 }
 
