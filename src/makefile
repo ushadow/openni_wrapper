@@ -1,6 +1,6 @@
 OSTYPE := $(shell uname -s)
 
-BIN_DIR = /home/yingyin/workspace/tabletop/tabletop_kinect
+BIN_DIR = /usr/lib
 
 INC_DIRS = . /usr/include/ni /usr/lib/jvm/java-6-sun-1.6.0.26/include \
 					  /usr/lib/jvm/java-6-sun-1.6.0.26/include/linux
