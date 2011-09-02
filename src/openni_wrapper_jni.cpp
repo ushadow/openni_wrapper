@@ -32,7 +32,7 @@ JNIEXPORT jboolean JNICALL Java_edu_mit_yingyin_tabletop_PartialOpenNIDevice_wai
   return wrapper->waitAnyUpdateAll();
 }
 
-JNIEXPORT jboolean JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_waitDepthUpdateAll
+JNIEXPORT jboolean JNICALL Java_edu_mit_yingyin_tabletop_PartialOpenNIDevice_waitDepthUpdateAll
   (JNIEnv *env, jobject obj, jobject ctrl_block) {
   OpenNIWrapper* wrapper =
       *((OpenNIWrapper**)env->GetDirectBufferAddress(ctrl_block));
