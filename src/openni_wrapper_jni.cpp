@@ -7,7 +7,7 @@
 #include "openni_wrapper_jni.h"
 #include "openni_wrapper.h"
 
-JNIEXPORT jboolean JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_initFromXmlFile
+JNIEXPORT jboolean JNICALL Java_edu_mit_yingyin_tabletop_PartialOpenNIDevice_initFromXmlFile
   (JNIEnv *env, jobject obj, jobject ctrl_block, jstring config_file,
    jobject widthBuf, jobject heightBuf) {
   OpenNIWrapper::getenv();
@@ -25,7 +25,7 @@ JNIEXPORT jboolean JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_initFromX
   return ret;
 }
 
-JNIEXPORT jboolean JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_waitAnyUpdateAll
+JNIEXPORT jboolean JNICALL Java_edu_mit_yingyin_tabletop_PartialOpenNIDevice_waitAnyUpdateAll
   (JNIEnv *env, jobject obj, jobject ctrl_block) {
   OpenNIWrapper* wrapper =
       *((OpenNIWrapper**)env->GetDirectBufferAddress(ctrl_block));
@@ -39,14 +39,14 @@ JNIEXPORT jboolean JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_waitDepth
   return wrapper->waitDepthUpdateAll();
 }
 
-JNIEXPORT jint JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_getDepthMap
+JNIEXPORT jint JNICALL Java_edu_mit_yingyin_tabletop_PartialOpenNIDevice_getDepthMap
   (JNIEnv *env, jobject obj, jobject ctrl_block, jobject depth_buf) {
   OpenNIWrapper* wrapper =
       *((OpenNIWrapper**)env->GetDirectBufferAddress(ctrl_block));
   return wrapper->getDepthMap((int*)env->GetDirectBufferAddress(depth_buf));
 }
 
-JNIEXPORT void JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_release
+JNIEXPORT void JNICALL Java_edu_mit_yingyin_tabletop_PartialOpenNIDevice_release
   (JNIEnv *env, jobject obj, jobject ctrl_block) {
   OpenNIWrapper* wrapper =
         *((OpenNIWrapper**)env->GetDirectBufferAddress(ctrl_block));
@@ -54,7 +54,7 @@ JNIEXPORT void JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_release
   delete wrapper;
 }
 
-JNIEXPORT void JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_convertDepthProjectiveToWorld
+JNIEXPORT void JNICALL Java_edu_mit_yingyin_tabletop_PartialOpenNIDevice_convertDepthProjectiveToWorld
   (JNIEnv *env, jobject obj, jobject ctrl_block, jobject points) {
   OpenNIWrapper* wrapper =
       *((OpenNIWrapper**)env->GetDirectBufferAddress(ctrl_block));
@@ -62,7 +62,7 @@ JNIEXPORT void JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_convertDepthP
       (float*)env->GetDirectBufferAddress(points));
 }
 
-JNIEXPORT void JNICALL Java_edu_mit_yingyin_tabletop_OpenNIWrapper_loadFile
+JNIEXPORT void JNICALL Java_edu_mit_yingyin_tabletop_PartialOpenNIDevice_loadFile
   (JNIEnv *env, jclass c, jstring file_name, jobject buffer, jint size) {
   char strbuf[128];
   int len = env->GetStringLength(file_name);
