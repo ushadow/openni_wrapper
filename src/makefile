@@ -2,8 +2,8 @@ OSTYPE := $(shell uname -s)
 
 BIN_DIR = /usr/lib
 
-INC_DIRS = . /usr/include/ni /usr/lib/jvm/java-6-sun-1.6.0.26/include \
-					  /usr/lib/jvm/java-6-sun-1.6.0.26/include/linux
+INC_DIRS = . /usr/include/ni /usr/lib/jvm/java-1.6.0-openjdk/include \
+					  /usr/lib/jvm/java-1.6.0-openjdk/include/linux
 
 SRC_FILES = *.cpp
 
