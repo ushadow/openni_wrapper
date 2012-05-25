@@ -1,5 +1,5 @@
 /*
- * hand_processor.cpp
+ * Java wrapper for OpenNI.
  *
  *  Created on: May 27, 2011
  *      Author: yingyin
